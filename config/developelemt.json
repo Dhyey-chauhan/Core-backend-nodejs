@@ -1,0 +1,9 @@
+{
+    "PORT": 8080,
+"MONGO_URI": "mongodb+srv://dhyeychauhan165_db_user:4ke4N1ldW8uwtblY@cluster0.nwixzxn.mongodb.net/backend-basic?appName=Cluster0",
+    "JWT_SECRET": "dhyey@123#@!",
+    "JWT_REFRESH_SECRET": "dhyey@123#@!",
+    "JWT_ACCESS_SECRET": "dhyey@123#@!",
+    "NODE_ENV": "development"
+}
+
