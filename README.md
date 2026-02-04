@@ -60,33 +60,6 @@ Core-backend/
 └── README.md
 ```
 
-## 🛠️ Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/Dhyey-chauhan/Core-backend-nodejs.git
-cd Core-backend
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-## ⚙️ Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-PORT=8080
-NODE_ENV=development
-MONGO_URI=mongodb://localhost:27017/core-backend
-JWT_ACCESS_SECRET=your_access_secret_key
-JWT_REFRESH_SECRET=your_refresh_secret_key
-REDIS_URL=redis://localhost:6379
-```
-
 ## 🔑 User Status Enum
 
 | Status | Value | Description |
