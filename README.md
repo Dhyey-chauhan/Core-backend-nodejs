@@ -285,10 +285,6 @@ Authorization: Bearer <admin_token>
 **Dhyey Chauhan**
 - GitHub: [@Dhyey-chauhan](https://github.com/Dhyey-chauhan)
 
-## 📄 License
-
-This project is licensed under the MIT License.
-
 ---
 
 ## 🔐 Security Notes
