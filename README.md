@@ -1,13 +1,301 @@
-# Core Node Backend 🚀
 
-A production‑ready Node.js backend built with a clean, modular, and scalable architecture, following real‑world industry standards. This project showcases how a backend system is structured in professional environments, focusing on security, maintainability, and extensibility.
+# Core Backend - Node.js Authentication & User Management API
 
-📌 Overview
+A robust Node.js backend application with user authentication, role-based access control, and comprehensive user management features.
 
-This repository implements a core backend system with authentication, validation, file uploads, and secure API handling. It is designed to reflect how backend services are built and maintained in modern companies.
+## 🚀 Features
 
-The project is suitable for:
+### User Features
+- **User Registration & Login** - Secure authentication with JWT tokens
+- **Profile Management** - View and update user profiles
+- **File Upload** - Upload profile images/documents
+- **Account Deletion** - Soft delete account (self-deletion)
+- **Token Refresh** - Refresh expired access tokens
 
-- Backend internships & junior developer roles
-- Learning enterprise‑level backend structure
-- Use as a starter template for scalable applications
+### Admin Features
+- **Admin Authentication** - Separate admin login system
+- **User List** - View all users with search and filters
+- **User Status Management**:
+  - Deactivate users (soft delete by admin)
+  - Reactivate deactivated users
+  - View deleted users (filtered by deletion type)
+- **Role-based Access** - Admin-only routes protection
+
+### Security Features
+- JWT-based authentication
+- Redis token storage & validation
+- Password hashing with bcrypt
+- HTTP-only secure cookies
+- Role-based access control (RBAC)
+
+## 📁 Project Structure
+
+```
+Core-backend/
+├── config/
+│   ├── index.js           # Main configuration
+│   ├── developelemt.js     # Development config
+│   └── Redis.js           # Redis client setup
+├── src/
+│   ├── index.js           # App entry point
+│   ├── components/
+│   │   ├── admin/         # Admin module
+│   │   │   ├── controller/
+│   │   │   ├── model/
+│   │   │   ├── route.js
+│   │   │   └── index.js
+│   │   ├── user/          # User module
+│   │   │   ├── controller/
+│   │   │   ├── model/
+│   │   │   ├── route.js
+│   │   │   └── index.js
+│   │   ├── middlewares/
+│   │   │   └── authMiddleware.js
+│   │   └── utils/
+│   │       ├── commonUtils.js
+│   │       ├── enum.js
+│   │       └── appString.js
+│   └── uploads/          # File uploads
+├── package.json
+└── README.md
+```
+
+## 🛠️ Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/Dhyey-chauhan/Core-backend-nodejs.git
+cd Core-backend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+## ⚙️ Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+PORT=8080
+NODE_ENV=development
+MONGO_URI=mongodb://localhost:27017/core-backend
+JWT_ACCESS_SECRET=your_access_secret_key
+JWT_REFRESH_SECRET=your_refresh_secret_key
+REDIS_URL=redis://localhost:6379
+```
+
+## 🔑 User Status Enum
+
+| Status | Value | Description |
+|--------|-------|-------------|
+| ACTIVE | 1 | Normal active user |
+| DEACTIVATED_BY_ADMIN | 2 | Admin deactivated user |
+| DELETED_BY_USER | 3 | User self-deleted account |
+| DELETED_BY_ADMIN | 4 | Admin deleted user account |
+
+## 📡 API Endpoints
+
+### Public Routes
+
+#### User Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/register` | Register new user |
+| POST | `/api/login` | User login |
+| POST | `/api/logout` | User logout |
+| GET | `/api/refresh-token` | Refresh access token |
+
+#### Admin Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/admin/register` | Register admin |
+| POST | `/api/admin/login` | Admin login |
+
+---
+
+### Protected Routes (User)
+
+#### Authentication
+| Method | Endpoint | Headers | Description |
+|--------|----------|---------|-------------|
+| DELETE | `/api/delete-account` | Cookie: accessToken | Delete own account |
+| PUT | `/api/update` | Cookie: accessToken | Update profile |
+
+#### Profile Management
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/profile` | Get user profile |
+| POST | `/api/upload` | Upload file/image |
+
+---
+
+### Protected Routes (Admin)
+
+| Method | Endpoint | Headers | Description |
+|--------|----------|---------|-------------|
+| GET | `/api/admin/getallUser` | Authorization: Bearer \<token\> | Get all users |
+| PUT | `/api/admin/users/:id/deactivate` | Authorization: Bearer \<token\> | Deactivate user |
+| PUT | `/api/admin/users/:id/activate` | Authorization: Bearer \<token\> | Activate user |
+
+#### User List Filters
+
+| Query Parameter | Returns |
+|----------------|---------|
+| `?deletedUser=admin` | Users deleted by admin |
+| `?deletedUser=user` | Users who self-deleted |
+| `?deletedUser=all` | Both deleted types |
+| No filter | All users (active + deleted) |
+
+## 📝 API Request/Response Examples
+
+### User Registration
+```http
+POST /api/register
+Content-Type: application/json
+
+{
+  "userName": "john_doe",
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+### User Login
+```http
+POST /api/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+**Response:**
+```json
+{
+  "status": 1,
+  "message": "Login successful",
+  "data": {}
+}
+```
+
+Cookies set: `accessToken`, `refreshToken`
+
+### Delete Account (User)
+```http
+DELETE /api/delete-account
+Cookie: accessToken=<token>
+```
+
+**Response:**
+```json
+{
+  "status": 1,
+  "message": "User account deleted successfully"
+}
+```
+
+### Admin - Get Users (Filtered)
+```http
+GET /api/admin/getallUser?deletedUser=admin
+Authorization: Bearer <admin_token>
+```
+
+**Response:**
+```json
+{
+  "status": 1,
+  "message": "Users fetched successfully",
+  "users": [
+    {
+      "_id": "...",
+      "userName": "...",
+      "email": "...",
+      "status": 4,
+      "deletedBy": "admin"
+    }
+  ],
+  "count": 1
+}
+```
+
+### Admin - Deactivate User
+```http
+PUT /api/admin/users/USER_ID/deactivate
+Authorization: Bearer <admin_token>
+```
+
+**Response:**
+```json
+{
+  "status": 1,
+  "message": "User deleted by admin successfully",
+  "user": {
+    "_id": "...",
+    "status": 4,
+    "deletedBy": "admin"
+  }
+}
+```
+
+### Admin - Activate User
+```http
+PUT /api/admin/users/USER_ID/activate
+Authorization: Bearer <admin_token>
+```
+
+## 🚫 Account Deletion Rules
+
+### User Self-Deletion
+- User can delete their own account
+- **Cannot login again** after self-deletion
+- **Admin cannot activate** a self-deleted user
+
+### Admin Deletion
+- Admin can deactivate active users
+- Admin can reactivate deactivated users
+- **Deleted user cannot login**
+- **Admin can reactivate** admin-deleted users
+
+## 🧪 Testing with Postman
+
+1. **Login as User** → Get cookies
+2. **Delete Account** → Use cookies
+3. **Login as Admin** → Get token
+4. **Get Deleted Users** → `GET /api/admin/getallUser?deletedUser=all`
+5. **Try to Activate** → `PUT /api/admin/users/:id/activate`
+
+## 📦 Dependencies
+
+- **express** - Web framework
+- **mongoose** - MongoDB ODM
+- **jsonwebtoken** - JWT authentication
+- **bcryptjs** - Password hashing
+- **redis** - Token storage
+- **cookie-parser** - Cookie handling
+- **multer** - File uploads
+- **validatorjs** - Input validation
+
+## 👤 Author
+
+**Dhyey Chauhan**
+- GitHub: [@Dhyey-chauhan](https://github.com/Dhyey-chauhan)
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 🔐 Security Notes
+
+- Access tokens expire in 60 seconds (configurable)
+- Refresh tokens valid for 7 days
+- All tokens stored in Redis for validation
+- Admin routes require Bearer token in Authorization header
+- User routes require access token in cookies
+
