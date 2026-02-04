@@ -122,13 +122,6 @@ Core-backend/
 | `?deletedUser=all` | Both deleted types |
 | No filter | All users (active + deleted) |
 
-## 📝 API Request/Response Examples
-
-### User Registration
-```http
-POST /api/register
-Content-Type: application/json
-
 
 ```
 
@@ -163,6 +156,14 @@ Content-Type: application/json
 - **cookie-parser** - Cookie handling
 - **multer** - File uploads
 - **validatorjs** - Input validation
+
+📘 What I Learned from This Project
+	•	Implementing JWT authentication with Redis
+	•	Designing role-based access control (RBAC)
+	•	Structuring backend projects using modules
+	•	Writing reusable authentication middleware
+	•	Handling soft deletes and user state management
+	•	Securing APIs using cookies and headers
 
 ## 👤 Author
 
